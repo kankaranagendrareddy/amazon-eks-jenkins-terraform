@@ -1,4 +1,4 @@
-FROM java:default-jre
+FROM java:1.8.0
 VOLUME /tmp
 ADD target/spring-petclinic-2.1.0.jar app.jar
 EXPOSE 8080
