@@ -22,38 +22,33 @@ pipeline {
             }
         }
         stage('Build Docker Image') {
-            when {
-                branch 'master'
+            steps {
+              sh 'docker build -t kankaranagendrareddy/nag:latest .'
+              }
+        }
+        stage('Push Docker image') {
+            environment {
+                DOCKER_HUB_LOGIN = credentials('docker')
             }
             steps {
-                echo '=== Building Petclinic Docker Image ==='
-                script {
-                    app = docker.build("ibuchh/petclinic-spinnaker-jenkins")
+                sh 'docker login --username=$DOCKER_HUB_LOGIN_USR --password=$DOCKER_HUB_LOGIN_PSW'
+                sh    'docker push kankaranagendrareddy/nag:latest'
+            }
+        }
+          
+        stage('K8S Deploy') {
+            steps {
+                withKubeConfig([credentialsId: 'k8s', serverUrl: '']) {
+                    sh ('kubectl apply -f  petclinic.yaml')
                 }
             }
         }
-        stage('Push Docker Image') {
-            when {
-                branch 'master'
-            }
-            steps {
-                echo '=== Pushing Petclinic Docker Image ==='
-                script {
-                    GIT_COMMIT_HASH = sh (script: "git log -n 1 --pretty=format:'%H'", returnStdout: true)
-                    SHORT_COMMIT = "${GIT_COMMIT_HASH[0..7]}"
-                    docker.withRegistry('https://registry.hub.docker.com', 'dockerHubCredentials') {
-                        app.push("$SHORT_COMMIT")
-                        app.push("latest")
-                    }
-                }
-            }
+        stage('Check WebApp Rechability') {
+          steps {
+          sh 'sleep 10s'
+          sh 'curl http://13.127.225.44:30007'
+          }
         }
-        stage('Remove local images') {
-            steps {
-                echo '=== Delete the local docker images ==='
-                sh("docker rmi -f ibuchh/petclinic-spinnaker-jenkins:latest || :")
-                sh("docker rmi -f ibuchh/petclinic-spinnaker-jenkins:$SHORT_COMMIT || :")
-            }
-        }
-    }
+        
+      }
 }
