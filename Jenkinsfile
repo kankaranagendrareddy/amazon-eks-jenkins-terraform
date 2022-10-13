@@ -10,7 +10,7 @@ pipeline {
         
         stage('Clone Repo') {
            steps {
-               sh 'rm -rf /amazon-eks-jenkins-terraform'
+               sh 'rm -rf amazon-eks-jenkins-terraform'
                sh 'git clone https://github.com/kankaranagendrareddy/amazon-eks-jenkins-terraform.git'
             }
         }
