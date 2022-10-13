@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    tools ("maven") {
+         maven "maven363"
+    }
        triggers {
         pollSCM "* * * * *"
        }
