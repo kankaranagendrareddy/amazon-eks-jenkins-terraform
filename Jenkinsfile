@@ -4,6 +4,13 @@ pipeline {
         pollSCM "* * * * *"
        }
     stages {
+        
+        stage('Clone Repo') {
+           steps {
+               sh 'rm -rf /amazon-eks-jenkins-terraform'
+               sh 'git clone https://github.com/kankaranagendrareddy/amazon-eks-jenkins-terraform.git'
+            }
+        }
         stage('Build Application') { 
             steps {
                 echo '=== Building Petclinic Application ==='
