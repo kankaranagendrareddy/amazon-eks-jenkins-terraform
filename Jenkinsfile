@@ -23,7 +23,7 @@ pipeline {
         }
         stage('Build Docker Image') {
             steps {
-              sh 'docker build -t kankaranagendrareddy/nag:latest .'
+              sh 'docker build -t kankaranagendrareddy/petclinic:latest .'
               }
         }
         stage('Push Docker image') {
@@ -32,7 +32,7 @@ pipeline {
             }
             steps {
                 sh 'docker login --username=$DOCKER_HUB_LOGIN_USR --password=$DOCKER_HUB_LOGIN_PSW'
-                sh    'docker push kankaranagendrareddy/nag:latest'
+                sh    'docker push kankaranagendrareddy/petclinic:latest'
             }
         }
           
